@@ -1,4 +1,4 @@
-import React, {useContext} from 'react'
+import React, {useContext, useEffect} from 'react'
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
@@ -16,8 +16,10 @@ import TotalInterest from './Total_InterestRate'
 import TotalExpected from './Total_Expected'
 import TotalTransactions from './Total_Transactions'
 
+import { UserContext } from './context/UserContext'
 import { InfoContext } from './context/InfoContext'
 import { UserBalanceContext } from './context/UserBalanceContext'
+import WalletTest from './WalletTest'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -87,45 +89,51 @@ const useStyles = makeStyles((theme) => ({
 })
 );
 
-    const RedArrow = withStyles({
-        root: {
-            color: red[400]
-        }
-    })(ArrowDownwardIcon);
+const RedArrow = withStyles({
+    root: {
+        color: red[400]
+    }
+})(ArrowDownwardIcon);
 
-    const GreenArrow = withStyles({
-        root: {
-            color: green[400]
-        }
-    })(ArrowUpwardIcon);
+const GreenArrow = withStyles({
+    root: {
+        color: green[400]
+    }
+})(ArrowUpwardIcon);
+
 
 const Body = () => {
     const classes = useStyles();
+    const [value, setValue] = useContext(UserContext);
     const [info, setInfo] = useContext(InfoContext);
     const [userBalance, setUserBalance] = useContext(UserBalanceContext);
+
+    useEffect(() => {
+        <WalletTest value={value} />
+    },[])
  
     return (
         <div className={classes.content}>
             <div className={classes.appBarSpacer} />
-            
+        
             <Container maxWidth="lg" className={classes.container}>
                 <Grid container spacing={1}>
                     <Grid item xs={4} md={4} lg={4}>
                         <Paper className={classes.customBorderRadius} elevation={7}>
-                            <Typography variant="h6" className={classes.sub_title}>Gold<RedArrow /></Typography>
-                            <Typography variant="h6" className={classes.sub_title}>1,234UST</Typography>
+                            <Typography variant="h6" className={classes.sub_title}>UST BALANCE<RedArrow /></Typography>
+                            <Typography variant="h6" className={classes.sub_title}>{info.balance}</Typography>
                         </Paper>
                     </Grid>
                     <Grid item xs={4} md={4} lg={4}>
                         <Paper className={classes.customBorderRadius} elevation={7}>
-                            <Typography variant="h6" className={classes.sub_title}>Silver<GreenArrow /></Typography>
-                            <Typography variant="h6" className={classes.sub_title}>73UST</Typography>
+                            <Typography variant="h6" className={classes.sub_title}>EARNING %<GreenArrow /></Typography>
+                            <Typography variant="h6" className={classes.sub_title}>{info.deposit}</Typography>
                         </Paper>
                     </Grid>
                     <Grid item xs={4} md={4} lg={4}>
                         <Paper className={classes.customBorderRadius} elevation={7}>
-                            <Typography variant="h6" className={classes.sub_title}>Platinum<GreenArrow /></Typography>
-                            <Typography variant="h6" className={classes.sub_title}>1,254UST</Typography>
+                            <Typography variant="h6" className={classes.sub_title}>REWARDS<GreenArrow /></Typography>
+                            <Typography variant="h6" className={classes.sub_title}>{userBalance}</Typography>
                         </Paper>
                     </Grid>
                 </Grid>
@@ -139,7 +147,7 @@ const Body = () => {
                     <Grid item xs={12} md={7} lg={7}>
                         <Card elevation={7} className={classes.fixedCardHeight}>
                             <CardContent>
-                                <TotalDeposit deposit={userBalance} />
+                                <TotalDeposit deposit={info.deposit} />
                             </CardContent>
                         </Card>
                     </Grid>

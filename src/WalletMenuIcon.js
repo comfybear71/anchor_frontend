@@ -1,26 +1,16 @@
 import React, {useState, useContext, useEffect} from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import AccountBalanceWalletTwoToneIcon from '@material-ui/icons/AccountBalanceWalletTwoTone';
-import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
 import Box from '@material-ui/core/Box';
 import { Button } from '@material-ui/core'
-import {withStyles, makeStyles} from '@material-ui/core/styles';
+import { makeStyles} from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import Title from "./Title";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
 import Typography from '@material-ui/core/Typography';
-import InputBase from '@material-ui/core/InputBase';
-import Divider from '@material-ui/core/Divider';
-import MenuIcon from '@material-ui/icons/Menu';
-import SearchIcon from '@material-ui/icons/Search';
-import DirectionsIcon from '@material-ui/icons/Directions';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import Popover from '@material-ui/core/Popover';
 import { UserContext } from './context/UserContext'
@@ -105,27 +95,6 @@ const useStyles = makeStyles((theme) => ({
 })
 );
 
-// const CssTextField = withStyles({
-//     root: {
-//     '& label.Mui-focused': {
-//         color: 'green',
-//     },
-//     '& .MuiInput-underline:after': {
-//         borderBottomColor: 'green',
-//     },
-//     '& .MuiOutlinedInput-root': {
-//         '& fieldset': {
-//         borderColor: 'red',
-//         },
-//         '&:hover fieldset': {
-//         borderColor: 'yellow',
-//         },
-//         '&.Mui-focused fieldset': {
-//         borderColor: 'green',
-//         },
-//     },
-//     },
-// })(TextField);
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -133,17 +102,15 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 const  WalletMenuIcon = (props) => {
     const classes = useStyles();
+
     const [value, setValue] = useContext(UserContext);
     const [info, setInfo] = useContext(InfoContext);
-    const [rewards, setRewards] = useContext(RewardContext)
-    const [userBalance, setUserBalance] = useContext(UserBalanceContext);
     const [wallet, setWallet] = useState();
     const [openWallet, setOpenWallet] = useState(false);
 
     const handleClickOpenWallet = () => {
         setOpenWallet(!openWallet);
     };
-
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const handlePopoverOpen = (event) => {
@@ -155,13 +122,12 @@ const  WalletMenuIcon = (props) => {
 
     const open = Boolean(anchorEl);
 
-
     const ext = new Extension();
     const connect = () => {
         ext.connect();
         ext.on("onConnect", setWallet);
         handleClickOpenWallet()
-        
+
     }
 
     useEffect(() => {
@@ -178,18 +144,19 @@ const  WalletMenuIcon = (props) => {
                 const balanceInfo = await anchorEarn.balance({ currencies: [ DENOMS.UST ] });
                 const market = await anchorEarn.market({ currencies: [ DENOMS.UST ] });
 
-                    Axios.get(`https://anchorgold-server.herokuapp.com/api/users/${value}`)
-                    .then(resp => {
-                        setUserBalance(resp.data.ustBalance)
-                        setRewards(balanceInfo.balances[0].deposit_balance - resp.data.ustBalance)
-                    })
-                    .catch(err => {
-                        console.log(err)
-                    })
+                    // Axios.get(`https://anchorgold-server.herokuapp.com/api/users/${value}`)
+                    // .then(resp => {
+                    //     setUserBalance(resp.data.ustBalance)
+                    //     setRewards(balanceInfo.balances[0].deposit_balance - resp.data.ustBalance)
+                    // })
+                    // .catch(err => {
+                    //     console.log(err)
+                    // })
                 
                 setInfo({
                     balance: balanceInfo.balances[0].account_balance,
                     deposit: balanceInfo.balances[0].deposit_balance,
+
                     height: balanceInfo.height,
                     liquidity: market.markets[0].liquidity,
                     APY: market.markets[0].APY
@@ -197,7 +164,7 @@ const  WalletMenuIcon = (props) => {
             }
             fetchData(); 
         }
-    },[value])
+    })
 
     return (
         <>
