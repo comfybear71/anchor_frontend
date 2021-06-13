@@ -19,6 +19,9 @@
     import WalletMenuIcon from './WalletMenuIcon'
     import MenuIcon from './MenuIcon'
     import gold from './images/gold.png'
+    import { UserContext } from './context/UserContext'
+    import { InfoContext } from './context/InfoContext'
+    import { UserBalanceContext } from './context/UserBalanceContext'
 
 
     const useStyles = makeStyles((theme) => ({
@@ -115,8 +118,6 @@
             setAnchorEl(null);
         };
 
-
-
     return (
         <ThemeProvider theme={darkTheme}>
             <div className={classes.root}>
@@ -154,6 +155,7 @@
                         </div>
                     )}
                 </FormGroup>
+                
                 <AppBar position="static">
                     <Toolbar>
                         {/* <Typography variant="h6" className={classes.title}>Anchor.Gold</Typography> */}

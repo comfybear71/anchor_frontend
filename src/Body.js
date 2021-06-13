@@ -1,5 +1,4 @@
-import React from 'react'
-import clsx from "clsx";
+import React, {useContext} from 'react'
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
@@ -16,6 +15,10 @@ import TotalDeposit from './Total_Deposit'
 import TotalInterest from './Total_InterestRate'
 import TotalExpected from './Total_Expected'
 import TotalTransactions from './Total_Transactions'
+
+import { InfoContext } from './context/InfoContext'
+import { UserBalanceContext } from './context/UserBalanceContext'
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -84,25 +87,27 @@ const useStyles = makeStyles((theme) => ({
 })
 );
 
-const RedArrow = withStyles({
-    root: {
-        color: red[400]
-    }
-  })(ArrowDownwardIcon);
+    const RedArrow = withStyles({
+        root: {
+            color: red[400]
+        }
+    })(ArrowDownwardIcon);
 
-  const GreenArrow = withStyles({
-    root: {
-        color: green[400]
-    }
-  })(ArrowUpwardIcon);
+    const GreenArrow = withStyles({
+        root: {
+            color: green[400]
+        }
+    })(ArrowUpwardIcon);
 
 const Body = () => {
     const classes = useStyles();
-
+    const [info, setInfo] = useContext(InfoContext);
+    const [userBalance, setUserBalance] = useContext(UserBalanceContext);
+ 
     return (
         <div className={classes.content}>
             <div className={classes.appBarSpacer} />
-        
+            
             <Container maxWidth="lg" className={classes.container}>
                 <Grid container spacing={1}>
                     <Grid item xs={4} md={4} lg={4}>
@@ -134,7 +139,7 @@ const Body = () => {
                     <Grid item xs={12} md={7} lg={7}>
                         <Card elevation={7} className={classes.fixedCardHeight}>
                             <CardContent>
-                                <TotalDeposit />
+                                <TotalDeposit deposit={userBalance} />
                             </CardContent>
                         </Card>
                     </Grid>
@@ -143,16 +148,16 @@ const Body = () => {
                     <Grid item xs={12} md={5} lg={5}>
                         <Card elevation={7} className={classes.fixedCardHeight}>
                             <CardContent>
-                                <TotalInterest />
+                                <TotalInterest interest={info.APY} />
                             </CardContent>
                         </Card>
                     </Grid>
 
-                    {/* HISTORY  */}
+                    {/* HISTORY  PASSPROPS FROM AXIOS */}
                     <Grid item xs={12} md={7} lg={7} className={classes.item2}>
                         <Card elevation={7} className={classes.fixedTableHeight}>
                             <CardContent>
-                                <TotalTransactions />
+                                <TotalTransactions /> 
                             </CardContent>
                         </Card>
                     </Grid>
@@ -168,7 +173,7 @@ const Body = () => {
                 </Grid>
             </Container>
             
-            <Copyright />
+            <Copyright blockHeight={info.height} />
         </div>
     )
 }

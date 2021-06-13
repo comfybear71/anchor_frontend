@@ -1,5 +1,6 @@
 {
   "name": "anchor_frontend",
+  "homepage": "http://anchor.gold",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

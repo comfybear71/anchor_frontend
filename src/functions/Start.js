@@ -92,15 +92,17 @@ const Start = () => {
                                         type="button" 
                                         class="btn btn-success align-middle"
                                         onClick={wallet ? undefined : connect}>
+
                                         {!wallet && "Connect Wallet"}
-                                        <text 
+                                        {/* <text 
                                             multiline={wallet?.address}
                                             numberOfLines={wallet?.address ? 5 : 2}
                                             ellipsizeMode={'middle'}
                                         >
                                             {wallet?.address}
-                                        </text>
+                                        </text> */}
                                         {setValue(wallet?.address)} 
+                                        
                                     </button>
                                 </div>
                             </div>

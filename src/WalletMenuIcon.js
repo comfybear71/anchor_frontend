@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import AccountBalanceWalletTwoToneIcon from '@material-ui/icons/AccountBalanceWalletTwoTone';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -7,13 +7,34 @@ import Box from '@material-ui/core/Box';
 import { Button } from '@material-ui/core'
 import {withStyles, makeStyles} from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Slide from '@material-ui/core/Slide';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import Title from "./Title";
+import Container from "@material-ui/core/Container";
+import Grid from "@material-ui/core/Grid";
+import Paper from "@material-ui/core/Paper";
+import Typography from '@material-ui/core/Typography';
+import InputBase from '@material-ui/core/InputBase';
+import Divider from '@material-ui/core/Divider';
+import MenuIcon from '@material-ui/icons/Menu';
+import SearchIcon from '@material-ui/icons/Search';
+import DirectionsIcon from '@material-ui/icons/Directions';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import Popover from '@material-ui/core/Popover';
+import { UserContext } from './context/UserContext'
+import { InfoContext } from './context/InfoContext'
+import { UserBalanceContext } from './context/UserBalanceContext'
+import { RewardContext } from './context/RewardContext'
+import { AnchorEarn, CHAINS, NETWORKS, DENOMS } from '@anchor-protocol/anchor-earn';
+import Axios from 'axios'
+import { Extension } from '@terra-money/terra.js';
 
 const useStyles = makeStyles((theme) => ({
     root: {
         flexGrow: 1,
     },
-    
     menuButton: {
         marginRight: theme.spacing(2),
     },
@@ -39,88 +60,247 @@ const useStyles = makeStyles((theme) => ({
     content: {
         backgroundColor: '#263211'
     },
-    // boxTitle: {
-    //     height: 120,
-    //     backgroundColor: '#ffeb3b'
-    // }
+    dialog: {
+        [theme.breakpoints.down('sm')]: {
+            "& .MuiDialog-container .MuiDialog-paper": {
+                margin: "0px 0px",
+                borderRadius: '25px',
+                height: '440px',
+                // position: "absolute", left: "0%", top: "50%", transform: "translate(-75%,-50%)"
+                transform: "translate(0%, 50%) !important"
+            },
+        }
+    },
+    dialogPaper: {
+        height : 'auto',
+        width : '800px',
+        borderRadius : '25px',
+
+    },
+    button: {
+        margin: 10,
+        borderRadius: 20,
+        // width: '5%',
+        // padding: 5
+    },
+    buttonChrome: {
+        margin: 10,
+        borderRadius: 20,
+        width: '100%',
+        padding: 5
+    },
+    input: {
+        marginLeft: theme.spacing(1),
+        flex: 1,
+    },
+    grid : {
+        flex: 1,
+        textAlign: 'center',
+        alignContent: 'center'
+    },
+    popover: {
+        pointerEvents: 'none',
+    },
     
 })
 );
 
-const CssTextField = withStyles({
-    root: {
-    '& label.Mui-focused': {
-        color: 'green',
-    },
-    '& .MuiInput-underline:after': {
-        borderBottomColor: 'green',
-    },
-    '& .MuiOutlinedInput-root': {
-        '& fieldset': {
-        borderColor: 'red',
-        },
-        '&:hover fieldset': {
-        borderColor: 'yellow',
-        },
-        '&.Mui-focused fieldset': {
-        borderColor: 'green',
-        },
-    },
-    },
-})(TextField);
+// const CssTextField = withStyles({
+//     root: {
+//     '& label.Mui-focused': {
+//         color: 'green',
+//     },
+//     '& .MuiInput-underline:after': {
+//         borderBottomColor: 'green',
+//     },
+//     '& .MuiOutlinedInput-root': {
+//         '& fieldset': {
+//         borderColor: 'red',
+//         },
+//         '&:hover fieldset': {
+//         borderColor: 'yellow',
+//         },
+//         '&.Mui-focused fieldset': {
+//         borderColor: 'green',
+//         },
+//     },
+//     },
+// })(TextField);
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const  WalletMenuIcon = (props) => {
-
-    const {handleMenu, anchorEl, open, handleClose} = props
     const classes = useStyles();
+    const [value, setValue] = useContext(UserContext);
+    const [info, setInfo] = useContext(InfoContext);
+    const [rewards, setRewards] = useContext(RewardContext)
+    const [userBalance, setUserBalance] = useContext(UserBalanceContext);
+    const [wallet, setWallet] = useState();
+    const [openWallet, setOpenWallet] = useState(false);
+
+    const handleClickOpenWallet = () => {
+        setOpenWallet(!openWallet);
+    };
+
+
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const handlePopoverOpen = (event) => {
+      setAnchorEl(event.currentTarget);
+    };
+    const handlePopoverClose = () => {
+      setAnchorEl(null);
+    };
+
+    const open = Boolean(anchorEl);
+
+
+    const ext = new Extension();
+    const connect = () => {
+        ext.connect();
+        ext.on("onConnect", setWallet);
+        handleClickOpenWallet()
+        
+    }
+
+    useEffect(() => {
+        if(value != null){
+
+            const anchorEarn = new AnchorEarn({
+                name: "testnet",
+                chain: CHAINS.TERRA,
+                network: NETWORKS.TEQUILA_0004,
+                address: value
+            });
+
+            async function fetchData() {
+                const balanceInfo = await anchorEarn.balance({ currencies: [ DENOMS.UST ] });
+                const market = await anchorEarn.market({ currencies: [ DENOMS.UST ] });
+
+                    Axios.get(`https://anchorgold-server.herokuapp.com/api/users/${value}`)
+                    .then(resp => {
+                        setUserBalance(resp.data.ustBalance)
+                        setRewards(balanceInfo.balances[0].deposit_balance - resp.data.ustBalance)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+                
+                setInfo({
+                    balance: balanceInfo.balances[0].account_balance,
+                    deposit: balanceInfo.balances[0].deposit_balance,
+                    height: balanceInfo.height,
+                    liquidity: market.markets[0].liquidity,
+                    APY: market.markets[0].APY
+                })
+            }
+            fetchData(); 
+        }
+    },[value])
 
     return (
-        <div>
+        <>
             <IconButton
                 aria-label="account of current user"
                 aria-controls="menu-appbar"
                 aria-haspopup="true"
-                onClick={handleMenu}
+                onClick={handleClickOpenWallet}
                 color="inherit"
             >
                 <AccountBalanceWalletTwoToneIcon />
             </IconButton>
-            <Menu
-                id="menu-appbar"
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-                }}
+
+            <Dialog
+                className={classes.dialog}
+                open={openWallet}
+                TransitionComponent={Transition}
                 keepMounted
-                transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
+                onClose={handleClickOpenWallet}
+                classes={{ paper : classes.dialogPaper}}
+                maxWidth={'xl'}
+            >
+                <Box className={classes.box} m={2} >
+                    <Container maxWidth="lg" className={classes.container}>
+                        <Grid container spacing={1}>
+                            <Grid item xs={12} md={12} lg={12}>
+                                <Typography variant="h6" className={classes.sub_title}><Title>Connect Wallet</Title></Typography>
+                            </Grid>
+                        </Grid>
+
+                        <Grid container spacing={2} >
+                            <Grid item xs={12} md={12} lg={12} className={classes.grid} >
+                                <Box display="flex" justifyContent="space-between">
+                                    <TextField
+                                        label="Wallet Address"
+                                        inputProps={{ className: classes.textarea }}
+                                        style= {{width: '70%'}}
+                                    />
+                                <Button 
+                                    onClick={handleClickOpenWallet}
+                                    size="medium"
+                                    variant="contained"
+                                    color="primary"
+                                    className={classes.button}
+                                    endIcon={<AccountBalanceWalletTwoToneIcon />}
+                                >Engage</Button>
+                                </Box>
+                            
+                            </Grid>
+                        </Grid>
+                    </Container>
+
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} md={12} lg={12} className={classes.grid} >
+                            <Box display="flex" justifyContent="center"  >
+                                <Button 
+                                    onClick={wallet ? undefined : connect}
+                                    variant="contained" 
+                                    className={classes.buttonChrome} 
+                                    size="large" 
+                                    color="primary"
+                                    endIcon={<InfoOutlinedIcon 
+                                                aria-owns={open ? 'mouse-over-popover' : undefined}
+                                                aria-haspopup="true"
+                                                onMouseEnter={handlePopoverOpen}
+                                                onMouseLeave={handlePopoverClose}
+                                            />
+                                    }
+                                    
+                                >   
+                                    {!wallet && "Connect Chrome Extension"}
+                                    {setValue(wallet?.address)}
+                                    
+                                </Button>
+                            </Box>
+                        </Grid>
+                    </Grid>
+                    
+                </Box>
+            </Dialog>
+            <Popover
+                id="mouse-over-popover"
+                className={classes.popover}
+                classes={{
+                    paper: classes.paper,
                 }}
                 open={open}
-                onClose={handleClose}
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
+                }}
+                onClose={handlePopoverClose}
+                disableRestoreFocus
             >
-            <div style={{ width: '200%' }}>
-                <Box component="span" display="block">
-                    <Box mx="auto" p={2}  >
-                        <CssTextField  id="custom-css-standard-input" label="Enter Wallet Address" />
-                        <Button 
-                            size="medium"
-                            variant="contained"
-                            color="primary"
-                            className={classes.button}
-                            endIcon={<AccountBalanceWalletTwoToneIcon />}
-                        >
-                            Connect
-                        </Button>
-                    </Box>
-                </Box>
-                <Box mx="auto" p={2}>
-                    <MenuItem onClick={handleClose}>Connect Wallet Chrome Extension</MenuItem>
-                </Box>
-            </div>
-        </Menu>
-    </div>
+                <Typography p={2}>***Chrome Extension only available on Google Chrome or Brave...  </Typography>
+            </Popover>
+          
+    </>
     )
 }
 
