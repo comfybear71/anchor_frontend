@@ -19,10 +19,9 @@
     import WalletMenuIcon from './WalletMenuIcon'
     import MenuIcon from './MenuIcon'
     import gold from './images/gold.png'
-    import { UserContext } from './context/UserContext'
-    import { InfoContext } from './context/InfoContext'
-    import { UserBalanceContext } from './context/UserBalanceContext'
-
+    // import { UserContext } from './context/UserContext'
+    // import { InfoContext } from './context/InfoContext'
+    // import { UserBalanceContext } from './context/UserBalanceContext'
 
     const useStyles = makeStyles((theme) => ({
             root: {

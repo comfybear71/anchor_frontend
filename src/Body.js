@@ -117,18 +117,18 @@ const Body = () => {
                     <Grid item xs={4} md={4} lg={4}>
                         <Paper className={classes.customBorderRadius} elevation={7}>
                             <Typography variant="h6" className={classes.sub_title}>BAL<RedArrow /></Typography>
-                            <Typography variant="h6" className={classes.sub_title}>{parseFloat(info.balance).toFixed(4)}</Typography>
+                            <Typography variant="h6" className={classes.sub_title}>{parseFloat(info.balance).toFixed(2)}</Typography>
                         </Paper>
                     </Grid>
                     <Grid item xs={4} md={4} lg={4}>
                         <Paper className={classes.customBorderRadius} elevation={7}>
                             <Typography variant="h6" className={classes.sub_title}>EARN<GreenArrow /></Typography>
-                            <Typography variant="h6" className={classes.sub_title}>{parseFloat(info.deposit).toFixed(4)}</Typography>
+                            <Typography variant="h6" className={classes.sub_title}>{parseFloat(info.deposit).toFixed(2)}</Typography>
                         </Paper>
                     </Grid>
                     <Grid item xs={4} md={4} lg={4}>
                         <Paper className={classes.customBorderRadius} elevation={7}>
-                            <Typography variant="h6" className={classes.sub_title}>REWARDS<GreenArrow /></Typography>
+                            <Typography variant="h6" className={classes.sub_title}>REWARD</Typography>
                             <Typography variant="h6" className={classes.sub_title}>{parseFloat(info.reward).toFixed(6)}</Typography>
                         </Paper>
                     </Grid>
@@ -160,7 +160,7 @@ const Body = () => {
                     <Grid item xs={12} md={7} lg={7} className={classes.item2}>
                         <Card elevation={7} className={classes.fixedTableHeight}>
                             <CardContent>
-                                <TotalTransactions /> 
+                                <TotalTransactions value={true}/> 
                             </CardContent>
                         </Card>
                     </Grid>
@@ -169,7 +169,7 @@ const Body = () => {
                     <Grid item xs={12} md={5} lg={5} className={classes.item3}>
                         <Card elevation={7}  className={classes.fixedTableHeight}>
                             <CardContent >
-                                <TotalExpected />
+                                <TotalExpected apy={info.APY}/>
                             </CardContent>
                         </Card>
                     </Grid>

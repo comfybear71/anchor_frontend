@@ -34,10 +34,14 @@ function App() {
                     <UserBalanceContext.Provider value={[userBalance, setUserBalance]}>
                         <InfoContext.Provider value={[info, setInfo]} >
                             <RewardContext.Provider value={[rewards, setRewards]}>
-                                <Route path="/">
+                                <Route path="/earn">
+                                    <MenuAppBar />
+                                </Route>
+                                <Route exact path="/">
                                     <MenuAppBar />
                                     <Body />
                                 </Route>
+                                
                             </RewardContext.Provider>
                         </InfoContext.Provider >
                     </UserBalanceContext.Provider>

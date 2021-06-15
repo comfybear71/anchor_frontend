@@ -9,55 +9,40 @@ import { makeStyles} from '@material-ui/core/styles';
 
 
 const MenuIcon = (props) => {
+    const [anchorEl, setAnchorEl] = React.useState(null);
     
 
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    
+    const handleClose = (nav) => {
+        setAnchorEl(null);
+    
+    };
+
     return (
-        <div>
+        <>
             <IconButton
                 aria-label="account of current user"
                 aria-controls="menu-appbar"
                 aria-haspopup="true"
-                // onClick={handleMenu}
+                onClick={handleClick}
                 color="inherit"
             >
                 <MenuTwoToneIcon />
             </IconButton>
-            {/* <Menu
-                id="menu-appbar"
+            <Menu
+                id="simple-menu"
                 anchorEl={anchorEl}
-                anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-                }}
                 keepMounted
-                transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-                }}
-                open={open}
+                open={Boolean(anchorEl)}
                 onClose={handleClose}
             >
-                <div style={{ width: '200%' }}>
-                    <Box component="span" display="block">
-                        <Box mx="auto" p={2}  >
-                            <CssTextField  id="custom-css-standard-input" label="Enter Wallet Address" />
-                            <Button 
-                                size="medium"
-                                variant="contained"
-                                color="primary"
-                                className={classes.button}
-                                endIcon={<AccountBalanceWalletTwoToneIcon />}
-                            >
-                                Connect
-                            </Button>
-                        </Box>
-                    </Box>
-                    <Box mx="auto" p={2}>
-                        <MenuItem onClick={handleClose}>Connect Wallet Chrome Extension</MenuItem>
-                    </Box>
-                </div>
-            </Menu> */}
-        </div>
+                <MenuItem component="a" href="/earn">Earn</MenuItem>
+                <MenuItem component="a" href="/">Home</MenuItem>
+            </Menu>
+        </>
     )
 }
 

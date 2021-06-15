@@ -11,11 +11,7 @@ import Title from "./Title";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import Typography from '@material-ui/core/Typography';
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
-import Popover from '@material-ui/core/Popover';
-import { UserContext } from './context/UserContext'
 import { InfoContext } from './context/InfoContext'
-import { UserBalanceContext } from './context/UserBalanceContext'
 import { RewardContext } from './context/RewardContext'
 import { AnchorEarn, CHAINS, NETWORKS, DENOMS } from '@anchor-protocol/anchor-earn';
 import Axios from 'axios'
@@ -96,7 +92,6 @@ const useStyles = makeStyles((theme) => ({
 })
 );
 
-
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -104,11 +99,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 const  WalletMenuIcon = (props) => {
     const classes = useStyles();
     const [info, setInfo] = useContext(InfoContext);
-    // const [userBalance, setUserBalance] = useContext(UserBalanceContext);
-    const [rewards, setRewards] = useContext(RewardContext);
     const [wallet, setWallet] = useLocalStorage("wallet_address", "");
-
-
     const [openWallet, setOpenWallet] = useState(false);
 
     const handleClickOpenWallet = () => {
@@ -130,6 +121,8 @@ const  WalletMenuIcon = (props) => {
     }
 
     useEffect(() => {
+
+        setWallet({address: 'terra1kmm34gn0tryvx9wzwgxl7hd9fj5n8yt88g93jw'})
 
         if(wallet.address){
             const anchorEarn = new AnchorEarn({
@@ -235,14 +228,14 @@ const  WalletMenuIcon = (props) => {
                 <AccountBalanceWalletTwoToneIcon />
             </IconButton>
 
-            <ColorButton 
+            {/* <ColorButton 
                 onClick={destroy}
                 size="small"
                 variant="outlined"
                 color="primary"
                 className={classes.button}
                 
-            >App</ColorButton>
+            >App</ColorButton> */}
 
             <Dialog
                 className={classes.dialog}

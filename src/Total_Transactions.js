@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -30,11 +30,12 @@ container: {
 },
 });
 
-export default function Transactions() {
+export default function Transactions(props) {
     const classes = useStyles();
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [info, setInfo] = useContext(InfoContext);
+    
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -43,37 +44,46 @@ export default function Transactions() {
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(+event.target.value);
         setPage(0);
-    };
+    }
 
     useEffect(() => {
+        console.log(props.value)
         
-        Axios.get(`https://anchorgold-server.herokuapp.com/api/transactions/${info.wallet}`)
-        .then(resp => {
+        if (props.value){
             
-            for (var i = 0; i < resp.data.length; i++) {
+            const getTableData = () => {
 
-                function makeURL(val){
-                    var str = val
-                    var res = str.substring(0,6)
-                    var resLength = str.length
-                    var resLast = str.substring((resLength-6), resLength)
+                Axios.get(`https://anchorgold-server.herokuapp.com/api/transactions/${info.wallet}`)
+                .then(resp => {
                     
-                    var url = `https://finder.terra.money/tequila-0004/tx/${val}`
-                    var shortenedTXHash = res +  "..." + resLast
-                    return <Link href={url}>{shortenedTXHash}</Link>
-                }
-                
-                const newItem = {
-                    amount: resp.data[i].amount,
-                    transaction_type: resp.data[i].transaction_type,
-                    txHash:  makeURL(resp.data[i].txHash),  //resp.data[i].txHash, 
-                    date: resp.data[i].created_at
-                }
-                theArray.push(newItem)
+                    for (var i = 0; i < resp.data.length; i++) {
+
+                        function makeURL(val){
+                            var str = val
+                            var res = str.substring(0,6)
+                            var resLength = str.length
+                            var resLast = str.substring((resLength-6), resLength)
+                            
+                            var url = `https://finder.terra.money/tequila-0004/tx/${val}`
+                            var shortenedTXHash = res +  "..." + resLast
+                            return <Link href={url}>{shortenedTXHash}</Link>
+                        }
+                        
+                        const newItem = {
+                            amount: resp.data[i].amount,
+                            transaction_type: resp.data[i].transaction_type,
+                            txHash:  makeURL(resp.data[i].txHash),  //resp.data[i].txHash, 
+                            date: resp.data[i].created_at
+                        }
+                        theArray.push(newItem)
+                    }
+                    
+                })
             }
-            console.log('THE ARRAY', theArray)
-        })
-    },[])
+            getTableData()
+        }
+        
+    },[props.value, info.wallet])
     
 
     return (
