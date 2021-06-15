@@ -3,7 +3,7 @@ import IconButton from '@material-ui/core/IconButton';
 import AccountBalanceWalletTwoToneIcon from '@material-ui/icons/AccountBalanceWalletTwoTone';
 import Box from '@material-ui/core/Box';
 import { Button } from '@material-ui/core'
-import { makeStyles} from '@material-ui/core/styles';
+import { makeStyles, withStyles} from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
@@ -20,6 +20,7 @@ import { RewardContext } from './context/RewardContext'
 import { AnchorEarn, CHAINS, NETWORKS, DENOMS } from '@anchor-protocol/anchor-earn';
 import Axios from 'axios'
 import { Extension } from '@terra-money/terra.js';
+import { green } from "@material-ui/core/colors";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -102,69 +103,125 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 const  WalletMenuIcon = (props) => {
     const classes = useStyles();
-
-    const [value, setValue] = useContext(UserContext);
     const [info, setInfo] = useContext(InfoContext);
-    const [wallet, setWallet] = useState();
+    // const [userBalance, setUserBalance] = useContext(UserBalanceContext);
+    const [rewards, setRewards] = useContext(RewardContext);
+    const [wallet, setWallet] = useLocalStorage("wallet_address", "");
+
+
     const [openWallet, setOpenWallet] = useState(false);
 
     const handleClickOpenWallet = () => {
         setOpenWallet(!openWallet);
     };
 
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const handlePopoverOpen = (event) => {
-      setAnchorEl(event.currentTarget);
-    };
-    const handlePopoverClose = () => {
-      setAnchorEl(null);
-    };
-
-    const open = Boolean(anchorEl);
-
-    const ext = new Extension();
     const connect = () => {
+        const ext = new Extension();
         ext.connect();
         ext.on("onConnect", setWallet);
-        handleClickOpenWallet()
+    }
 
+    const destroy = () => {
+        localStorage.removeItem('wallet_address')
+    }
+
+    const connectWebWallet = () => {
+        handleClickOpenWallet()
     }
 
     useEffect(() => {
-        if(value != null){
 
+        if(wallet.address){
             const anchorEarn = new AnchorEarn({
                 name: "testnet",
                 chain: CHAINS.TERRA,
                 network: NETWORKS.TEQUILA_0004,
-                address: value
+                address: wallet.address
             });
 
             async function fetchData() {
                 const balanceInfo = await anchorEarn.balance({ currencies: [ DENOMS.UST ] });
                 const market = await anchorEarn.market({ currencies: [ DENOMS.UST ] });
 
-                    // Axios.get(`https://anchorgold-server.herokuapp.com/api/users/${value}`)
-                    // .then(resp => {
-                    //     setUserBalance(resp.data.ustBalance)
-                    //     setRewards(balanceInfo.balances[0].deposit_balance - resp.data.ustBalance)
-                    // })
-                    // .catch(err => {
-                    //     console.log(err)
-                    // })
-                
-                setInfo({
-                    balance: balanceInfo.balances[0].account_balance,
-                    deposit: balanceInfo.balances[0].deposit_balance,
-
-                    height: balanceInfo.height,
-                    liquidity: market.markets[0].liquidity,
-                    APY: market.markets[0].APY
+                await Axios.post(`https://anchorgold-server.herokuapp.com/api/users`, {
+                    wallet: wallet.address,
+                    ustBalance: 0
+                }).then(resp => {
+                    
                 })
+                .catch(err => {
+                    console.log( 'WALLET ALREADY EXISTS, PATCHING BALANCE' )
+                })
+
+                await Axios.get(`https://anchorgold-server.herokuapp.com/api/users/${wallet.address}`)
+                    .then(resp => {
+
+                        setInfo({
+                            balance: balanceInfo.balances[0].account_balance,
+                            deposit: balanceInfo.balances[0].deposit_balance,
+                            height: balanceInfo.height,
+                            liquidity: market.markets[0].liquidity,
+                            APY: market.markets[0].APY,
+                            wallet: wallet.address,
+                            reward: balanceInfo.balances[0].deposit_balance - resp.data.ustBalance, 
+                            initBalance: resp.data.ustBalance
+                        })
+                    })
+                    .catch(err => {
+                        console.log( 'SUM FUCKING ERROR' )
+                    })
             }
+            
             fetchData(); 
         }
-    })
+    }, []);
+
+    // Hook
+    function useLocalStorage(key, initialValue) {
+    // State to store our value
+    // Pass initial state function to useState so logic is only executed once
+    const [storedValue, setStoredValue] = useState(() => {
+        try {
+        // Get from local storage by key
+        const item = window.localStorage.getItem(key);
+        // Parse stored json or if none return initialValue
+        return item ? JSON.parse(item) : initialValue;
+        } catch (error) {
+        // If error also return initialValue
+        console.log(error);
+        return initialValue;
+        }
+    });
+    // Return a wrapped version of useState's setter function that ...
+    // ... persists the new value to localStorage.
+    const setValue = (value) => {
+        try {
+        // Allow value to be a function so we have same API as useState
+        const valueToStore =
+            value instanceof Function ? value(storedValue) : value;
+        // Save state
+        setStoredValue(valueToStore);
+        // Save to local storage
+        window.localStorage.setItem(key, JSON.stringify(valueToStore));
+        } catch (error) {
+        // A more advanced implementation would handle the error case
+        console.log(error);
+        }
+    };
+    return [storedValue, setValue];
+    }
+
+    const ColorButton = withStyles((theme) => ({
+        root: {
+            color: theme.palette.getContrastText(green[500]),
+            borderColor: green[500],
+            color: green[500],
+            '&:hover': {
+                backgroundColor: green[700],
+                color: '#fff'
+            },
+        },
+    }))(Button);
 
     return (
         <>
@@ -172,11 +229,20 @@ const  WalletMenuIcon = (props) => {
                 aria-label="account of current user"
                 aria-controls="menu-appbar"
                 aria-haspopup="true"
-                onClick={handleClickOpenWallet}
+                onClick={connect}
                 color="inherit"
             >
                 <AccountBalanceWalletTwoToneIcon />
             </IconButton>
+
+            <ColorButton 
+                onClick={destroy}
+                size="small"
+                variant="outlined"
+                color="primary"
+                className={classes.button}
+                
+            >App</ColorButton>
 
             <Dialog
                 className={classes.dialog}
@@ -202,9 +268,11 @@ const  WalletMenuIcon = (props) => {
                                         label="Wallet Address"
                                         inputProps={{ className: classes.textarea }}
                                         style= {{width: '70%'}}
+                                        // value={webWallet}
+                                        // onChange={e => setWebWallet(e.target.value)}
                                     />
                                 <Button 
-                                    onClick={handleClickOpenWallet}
+                                    onClick={connectWebWallet}
                                     size="medium"
                                     variant="contained"
                                     color="primary"
@@ -216,58 +284,9 @@ const  WalletMenuIcon = (props) => {
                             </Grid>
                         </Grid>
                     </Container>
-
-                    <Grid container spacing={2}>
-                        <Grid item xs={12} md={12} lg={12} className={classes.grid} >
-                            <Box display="flex" justifyContent="center"  >
-                                <Button 
-                                    onClick={wallet ? undefined : connect}
-                                    variant="contained" 
-                                    className={classes.buttonChrome} 
-                                    size="large" 
-                                    color="primary"
-                                    endIcon={<InfoOutlinedIcon 
-                                                aria-owns={open ? 'mouse-over-popover' : undefined}
-                                                aria-haspopup="true"
-                                                onMouseEnter={handlePopoverOpen}
-                                                onMouseLeave={handlePopoverClose}
-                                            />
-                                    }
-                                    
-                                >   
-                                    {!wallet && "Connect Chrome Extension"}
-                                    {setValue(wallet?.address)}
-                                    
-                                </Button>
-                            </Box>
-                        </Grid>
-                    </Grid>
-                    
                 </Box>
             </Dialog>
-            <Popover
-                id="mouse-over-popover"
-                className={classes.popover}
-                classes={{
-                    paper: classes.paper,
-                }}
-                open={open}
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'left',
-                }}
-                onClose={handlePopoverClose}
-                disableRestoreFocus
-            >
-                <Typography p={2}>***Chrome Extension only available on Google Chrome or Brave...  </Typography>
-            </Popover>
-          
-    </>
+        </>
     )
 }
 

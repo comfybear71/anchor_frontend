@@ -19,7 +19,7 @@ import TotalTransactions from './Total_Transactions'
 import { UserContext } from './context/UserContext'
 import { InfoContext } from './context/InfoContext'
 import { UserBalanceContext } from './context/UserBalanceContext'
-import WalletTest from './WalletTest'
+import { RewardContext } from './context/RewardContext'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -104,14 +104,10 @@ const GreenArrow = withStyles({
 
 const Body = () => {
     const classes = useStyles();
-    const [value, setValue] = useContext(UserContext);
     const [info, setInfo] = useContext(InfoContext);
-    const [userBalance, setUserBalance] = useContext(UserBalanceContext);
+    const [rewards, setRewards] = useContext(RewardContext);
 
-    useEffect(() => {
-        <WalletTest value={value} />
-    },[])
- 
+    
     return (
         <div className={classes.content}>
             <div className={classes.appBarSpacer} />
@@ -120,25 +116,24 @@ const Body = () => {
                 <Grid container spacing={1}>
                     <Grid item xs={4} md={4} lg={4}>
                         <Paper className={classes.customBorderRadius} elevation={7}>
-                            <Typography variant="h6" className={classes.sub_title}>UST BALANCE<RedArrow /></Typography>
-                            <Typography variant="h6" className={classes.sub_title}>{info.balance}</Typography>
+                            <Typography variant="h6" className={classes.sub_title}>BAL<RedArrow /></Typography>
+                            <Typography variant="h6" className={classes.sub_title}>{parseFloat(info.balance).toFixed(4)}</Typography>
                         </Paper>
                     </Grid>
                     <Grid item xs={4} md={4} lg={4}>
                         <Paper className={classes.customBorderRadius} elevation={7}>
-                            <Typography variant="h6" className={classes.sub_title}>EARNING %<GreenArrow /></Typography>
-                            <Typography variant="h6" className={classes.sub_title}>{info.deposit}</Typography>
+                            <Typography variant="h6" className={classes.sub_title}>EARN<GreenArrow /></Typography>
+                            <Typography variant="h6" className={classes.sub_title}>{parseFloat(info.deposit).toFixed(4)}</Typography>
                         </Paper>
                     </Grid>
                     <Grid item xs={4} md={4} lg={4}>
                         <Paper className={classes.customBorderRadius} elevation={7}>
                             <Typography variant="h6" className={classes.sub_title}>REWARDS<GreenArrow /></Typography>
-                            <Typography variant="h6" className={classes.sub_title}>{userBalance}</Typography>
+                            <Typography variant="h6" className={classes.sub_title}>{parseFloat(info.reward).toFixed(6)}</Typography>
                         </Paper>
                     </Grid>
                 </Grid>
             </Container>
-
 
             <Container maxWidth="lg" className={classes.container}>
                 <Grid container spacing={3}>
@@ -147,7 +142,7 @@ const Body = () => {
                     <Grid item xs={12} md={7} lg={7}>
                         <Card elevation={7} className={classes.fixedCardHeight}>
                             <CardContent>
-                                <TotalDeposit deposit={info.deposit} />
+                                <TotalDeposit deposit={info.initBalance} />
                             </CardContent>
                         </Card>
                     </Grid>
