@@ -19,4 +19,6 @@ Turn Terra into Gold
 
 `import { Button } from 'reactstrap';`
 
+- npm install react-device-detect --save
+
 

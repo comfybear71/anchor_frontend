@@ -17,6 +17,8 @@ import { AnchorEarn, CHAINS, NETWORKS, DENOMS } from '@anchor-protocol/anchor-ea
 import Axios from 'axios'
 import { Extension } from '@terra-money/terra.js';
 import { green } from "@material-ui/core/colors";
+import {isMobile} from 'react-device-detect';
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -107,22 +109,23 @@ const  WalletMenuIcon = (props) => {
     };
 
     const connect = () => {
+
         const ext = new Extension();
+        if(isMobile){
+            connectWebWallet()
+        }
         ext.connect();
         ext.on("onConnect", setWallet);
     }
 
-    const destroy = () => {
-        localStorage.removeItem('wallet_address')
-    }
-
     const connectWebWallet = () => {
+        setWallet({address: info.wallet})
         handleClickOpenWallet()
     }
 
     useEffect(() => {
 
-        setWallet({address: 'terra1kmm34gn0tryvx9wzwgxl7hd9fj5n8yt88g93jw'})
+        // setWallet({address: 'terra1kmm34gn0tryvx9wzwgxl7hd9fj5n8yt88g93jw'})
 
         if(wallet.address){
             const anchorEarn = new AnchorEarn({
@@ -147,24 +150,23 @@ const  WalletMenuIcon = (props) => {
                 })
 
                 await Axios.get(`https://anchorgold-server.herokuapp.com/api/users/${wallet.address}`)
-                    .then(resp => {
+                .then(resp => {
 
-                        setInfo({
-                            balance: balanceInfo.balances[0].account_balance,
-                            deposit: balanceInfo.balances[0].deposit_balance,
-                            height: balanceInfo.height,
-                            liquidity: market.markets[0].liquidity,
-                            APY: market.markets[0].APY,
-                            wallet: wallet.address,
-                            reward: balanceInfo.balances[0].deposit_balance - resp.data.ustBalance, 
-                            initBalance: resp.data.ustBalance
-                        })
+                    setInfo({
+                        balance: balanceInfo.balances[0].account_balance,
+                        deposit: balanceInfo.balances[0].deposit_balance,
+                        height: balanceInfo.height,
+                        liquidity: market.markets[0].liquidity,
+                        APY: market.markets[0].APY,
+                        wallet: wallet.address,
+                        reward: balanceInfo.balances[0].deposit_balance - resp.data.ustBalance, 
+                        initBalance: resp.data.ustBalance
                     })
-                    .catch(err => {
-                        console.log( 'SUM FUCKING ERROR' )
-                    })
+                })
+                .catch(err => {
+                    console.log( 'SUM FUCKING ERROR' )
+                })
             }
-            
             fetchData(); 
         }
     }, []);
@@ -261,8 +263,8 @@ const  WalletMenuIcon = (props) => {
                                         label="Wallet Address"
                                         inputProps={{ className: classes.textarea }}
                                         style= {{width: '70%'}}
-                                        // value={webWallet}
-                                        // onChange={e => setWebWallet(e.target.value)}
+                                        value={info.wallet}
+                                        onChange={e => setInfo({wallet: e.target.value})}
                                     />
                                 <Button 
                                     onClick={connectWebWallet}

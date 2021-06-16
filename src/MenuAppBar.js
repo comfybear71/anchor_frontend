@@ -107,6 +107,7 @@
 
         const handleChange = (event) => {
             setAuth(event.target.checked);
+            destroy()
         };
 
         const handleMenu = (event) => {
@@ -116,6 +117,10 @@
         const handleClose = () => {
             setAnchorEl(null);
         };
+
+        const destroy = () => {
+            localStorage.removeItem('wallet_address')
+        }
 
     return (
         <ThemeProvider theme={darkTheme}>
