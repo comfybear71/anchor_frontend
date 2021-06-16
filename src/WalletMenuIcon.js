@@ -101,9 +101,14 @@ const  WalletMenuIcon = (props) => {
     const [info, setInfo] = useContext(InfoContext);
     const [wallet, setWallet] = useLocalStorage("wallet_address", "");
     const [openWallet, setOpenWallet] = useState(false);
+    const [openMenu, setOpenMenu] = useState(false);
 
     const handleClickOpenWallet = () => {
         setOpenWallet(!openWallet);
+    };
+    
+    const handleClickOpenMenu = () => {
+        setOpenMenu(!openMenu);
     };
 
     const connect = () => {
@@ -120,6 +125,7 @@ const  WalletMenuIcon = (props) => {
         setWallet({address: info.wallet})
         handleClickOpenWallet()
     }
+
 
     useEffect(() => {
 
@@ -256,6 +262,7 @@ const  WalletMenuIcon = (props) => {
                     </Container>
                 </Box>
             </Dialog>
+            
         </>
     )
 }

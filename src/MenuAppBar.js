@@ -15,44 +15,48 @@
     import FormGroup from '@material-ui/core/FormGroup';
     import { green, blue } from "@material-ui/core/colors";
     import Radio from '@material-ui/core/Radio';
-    
+  
+  
+    import { Button } from '@material-ui/core'
     import WalletMenuIcon from './WalletMenuIcon'
     import MenuIcon from './MenuIcon'
     import gold from './images/gold.png'
+    import {useStyles} from './styles.js'
     // import { UserContext } from './context/UserContext'
     // import { InfoContext } from './context/InfoContext'
     // import { UserBalanceContext } from './context/UserBalanceContext'
 
-    const useStyles = makeStyles((theme) => ({
-            root: {
-                flexGrow: 1,
-            },
+    // const useStyles = makeStyles((theme) => ({
+    //         root: {
+    //             flexGrow: 1,
+    //         },
             
-            menuButton: {
-                marginRight: theme.spacing(2),
-            },
-            title: {
-                flexShrink: 1,
-                textAlign: 'left'
-            },
-            titleMain1: {
-                flexGrow: 1,
-                margin: theme.spacing(1.5),
-                textAlign: 'center'
-            },
-            margin: {
-                margin: theme.spacing(0.5),
-            },
-            fixedHeight: {
-                height: 120
-            },
-            logo: {
-                maxWidth: 120,
-            },
-            appBarSpacer: theme.mixins.toolbar,
-        })
-    );
+    //         menuButton: {
+    //             marginRight: theme.spacing(2),
+    //         },
+    //         title: {
+    //             flexShrink: 1,
+    //             textAlign: 'left'
+    //         },
+            // titleMain1: {
+            //     flexGrow: 1,
+            //     margin: theme.spacing(1.5),
+            //     textAlign: 'center'
+            // },
+    //         margin: {
+    //             margin: theme.spacing(0.5),
+    //         },
+    //         fixedHeight: {
+    //             height: 120
+    //         },
+    //         logo: {
+    //             maxWidth: 120,
+    //         },
+    //         appBarSpacer: theme.mixins.toolbar,
+    //     })
+    // );
 
+    
     const GreenRadio = withStyles({
             root: {
                 color: green[400],
@@ -73,7 +77,9 @@
             checked: {},
     })((props) => <Radio color="default" {...props} />);
 
-    export default function MenuAppBar() {
+   
+
+    export default function MenuAppBar(props) {
     
         const [darkState, setDarkState] = useState(false);
         const palletType = darkState ? "dark" : "light";
@@ -92,10 +98,11 @@
             }
         });
         const [selectedValue, setSelectedValue] = React.useState('tequila');
-        const classes = useStyles();
+        const classes = useStyles(props);
         const [auth, setAuth] = React.useState(true);
         const [anchorEl, setAnchorEl] = React.useState(null);
         const open = Boolean(anchorEl);
+      
 
         const handleThemeChange = () => {
             setDarkState(!darkState);
@@ -121,6 +128,8 @@
         const destroy = () => {
             localStorage.removeItem('wallet_address')
         }
+
+
 
     return (
         <ThemeProvider theme={darkTheme}>
@@ -172,6 +181,7 @@
                             <MenuIcon />
                     </Toolbar>
                 </AppBar>
+               
             </div>
         </ThemeProvider>
     );

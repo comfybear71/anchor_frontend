@@ -12,61 +12,20 @@ import TextField from '@material-ui/core/TextField';
 import { InfoContext } from './context/InfoContext'
 import {AnchorEarn, CHAINS, NETWORKS, DENOMS} from '@anchor-protocol/anchor-earn';
 import Axios from 'axios';
-
-const useStyles = makeStyles((theme) => ({
-    button: {
-        margin: 10,
-        borderRadius: 20,
-        width: '40%',
-        padding: 5
-    },
-    dialogPaper: {
-        height : 'auto',
-        width : '800px',
-        borderRadius : '25px',
-
-    },
-    input: {
-        marginLeft: 5,
-        flex: 1,
-    },
-    iconButton: {
-        padding: 10,
-    },
-    divider: {
-        height: 28,
-        margin: 4,
-    },
-    buttonDeposit: {
-        margin: 10,
-        borderRadius: 20,
-        width: '20%',
-        padding: 5,
-    },
-    dialog: {
-        [theme.breakpoints.down('sm')]: {
-            "& .MuiDialog-container .MuiDialog-paper": {
-                margin: "0px 0px",
-                borderRadius: '25px',
-                height: '440px',
-                // position: "absolute", left: "0%", top: "50%", transform: "translate(-75%,-50%)"
-                transform: "translate(0%, 30%) !important"
-            },
-        }
-    },
-    
-}));
+import {useStyles} from './styles.js'
+import Backdrop from '@material-ui/core/Backdrop';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
 export default function Total_Deposit(props) {
-    const classes = useStyles();
+    const classes = useStyles(props);
     const [amount, setAmount] = useState();
     const [mnenmonic, setMnemonic] = useState('');
     const [openDeposit, setOpenDeposit] = useState(false);
     const [openWithdraw, setOpenWithdraw] = useState(false);
+    const [openInTransition, setOpenInTransition] = useState(false);
     const [info, setInfo] = useContext(InfoContext);
     const [status, setStatus] = useState();
     const [txFee, setTxFee] = useState();
@@ -83,6 +42,10 @@ export default function Total_Deposit(props) {
         setAmount('')
         setMnemonic('')
     };
+
+    const handleClickOpenTransition = () => {
+        setOpenInTransition(!openInTransition)
+    }
 
     const addDeposit = () => {
         if(info.wallet != null) {
@@ -154,12 +117,12 @@ export default function Total_Deposit(props) {
                 alert('No data')
             }
             handleClickOpenDeposit()
+            handleClickOpenTransition()
         } else {
             alert('Connect Wallet')
             handleClickOpenDeposit()
         }
     }
-
 
     const addWithdraw = () => {
         if(info.wallet != null) {
@@ -232,10 +195,18 @@ export default function Total_Deposit(props) {
                 alert('No data')
             }
             handleClickOpenWithdraw()
+            handleClickOpenTransition()
         } else {
             alert('Connect Wallet')
             handleClickOpenWithdraw()
         }
+    }
+
+    const onClose =  () => {
+        handleClickOpenTransition()
+        setStatus('')
+        setTxFee('')
+        setTxDetails('')
     }
 
     return (
@@ -253,6 +224,56 @@ export default function Total_Deposit(props) {
                 </Button>
             </Box>
 
+            {/* IN TRANSITION */}
+            <Dialog
+                className={classes.dialog}
+                open={openInTransition}
+                TransitionComponent={Transition}
+                keepMounted
+                onClose={(event, reason) => {
+                    console.log('Event', event, "Reason", reason)
+                    if (reason !== 'backdropClick') {
+                    onClose(event, reason);
+                    }
+                }}
+                classes={{ paper : classes.dialogPaper}}
+                maxWidth={'xl'}
+            >
+                <Box className={classes.box} m={5} >
+                    <DialogTitle id="alert-dialog-slide-title"><Title>TRANSMITTING</Title></DialogTitle>
+                    <Box display="flex"  >
+                        <Box p={1} flexGrow={1}  >
+                            <Typography>In Progress</Typography>
+                        </Box>
+                    </Box>
+                    <Box display="flex"  >
+                        <Box p={1} flexGrow={1}  >
+                            status: {status}
+                        </Box>
+                    </Box>
+                    <Box display="flex"  >
+                        <Box p={1} flexGrow={1}  >
+                            txFee: {txFee}
+                        </Box>
+                    </Box>
+                    <Box display="flex"  >
+                        <Box p={1} flexGrow={1}  >
+                            txDetails: {txDetails}
+                        </Box>
+                    </Box>
+
+                    <Box pt={4} align="center" >
+                        {status && (
+                            <Button onClick={onClose} variant="contained" className={classes.button} size="large" color="primary">
+                                COMPLETED
+                            </Button>
+                        )}
+                        
+                    </Box>
+
+                </Box>
+            </Dialog>
+
             {/* DEPOSIT */}
             <Dialog
                 className={classes.dialog}
@@ -262,7 +283,6 @@ export default function Total_Deposit(props) {
                 onClose={handleClickOpenDeposit}
                 classes={{ paper : classes.dialogPaper}}
                 maxWidth={'xl'}
-
             >
                 <Box className={classes.box} m={5} >
                     <DialogTitle id="alert-dialog-slide-title"><Title>DEPOSIT</Title></DialogTitle>
@@ -277,16 +297,13 @@ export default function Total_Deposit(props) {
                             /><FormHelperText id="my-helper-text">UST BALANCE: {info.balance} </FormHelperText>
                         </Box>
                     </Box>
-
                     <Box display="flex"  >
                         <Box p={1} flexGrow={1}  >
                             <TextField 
-                                
                                 fullWidth={true}  
                                 value={mnenmonic}
                                 onChange={e => setMnemonic(e.target.value)}
                                 label="Menonmic" 
-                                
                             /><FormHelperText id="my-helper-text">Paste Mnenomic</FormHelperText>
                         </Box>
                     </Box>
@@ -298,7 +315,6 @@ export default function Total_Deposit(props) {
                     </Box>
                 </Box>
             </Dialog>
-
 
             {/* WITHDRAW */}
             <Dialog

@@ -2,8 +2,7 @@ import React, {useContext} from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
+import ComingSoon from './ComingSoon'
 import Copyright from './Copyright'
 import { InfoContext } from './context/InfoContext'
 
@@ -85,6 +84,12 @@ const Earn = () => {
                     <Grid item xs={12} md={4} lg={47} className={classes.item2}>
                         <Platinum rewards={info.reward}/>
                     </Grid>
+                </Grid>
+            </Container>
+
+            <Container maxWidth="lg" className={classes.container}>
+                <Grid container spacing={1}>
+                    <ComingSoon />
                 </Grid>
             </Container>
             
