@@ -1,14 +1,11 @@
-import React, {useContext, useState} from 'react'
+import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import LinearProgress from '@material-ui/core/LinearProgress'
-import { styled } from '@material-ui/core/styles';
-import { InfoContext } from './context/InfoContext'
 import Box from '@material-ui/core/Box';
 import Title from './Title'
-import Popover from '@material-ui/core/Popover';
 import { Button } from '@material-ui/core'
 import { yellow, grey, red, green, blue } from "@material-ui/core/colors";
 import { withStyles, createStyles } from "@material-ui/core/styles";
@@ -18,6 +15,7 @@ import platinum1oz2021 from './images/platinum_1oz_2021.png'
 import platinum1oz2019Front from './images/platinum_1oz_2019_front.png'
 import platinum1oz2021Front from './images/platinum_1oz_2021_front.png'
 import Tooltip from '@material-ui/core/Tooltip';
+import {isMobile} from 'react-device-detect';
 
 const BorderLinearProgress = withStyles((theme) =>
     createStyles({
@@ -87,7 +85,6 @@ const useStyles = makeStyles((theme) => ({
 
 const Platinum = (props) => {
     const classes = useStyles();
-    const [info, setInfo] = useContext(InfoContext);
     const [platinumPrice, setPlatinumPrice] = useState({
         oneOUNCECOINWEDGE2019: 2799.00,
         oneOUNCECOINWEDGE2021: 2995.00
@@ -158,7 +155,7 @@ const Platinum = (props) => {
                                 }
                             >
                                 <Typography variant="subtitle1" display="inline">
-                                    1oz
+                                    1oz Coin 2019
                                 </Typography>
                             </HtmlTooltip>
                         </Box>
@@ -180,7 +177,7 @@ const Platinum = (props) => {
                                 }
                             >
                                 <Typography variant="subtitle1" display="inline">
-                                    1oz
+                                    1oz Coin 2021
                                 </Typography>
                             </HtmlTooltip>
                         </Box>

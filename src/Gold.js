@@ -16,6 +16,7 @@ import gold from './images/gold_image.png'
 import goldFront1gmFront from './images/gold_front_1gm.png'
 import goldFront1gmBack from './images/gold_back_1gm.png'
 import Tooltip from '@material-ui/core/Tooltip';
+import {isMobile} from 'react-device-detect';
 
 const BorderLinearProgress = withStyles((theme) =>
     createStyles({

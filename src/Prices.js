@@ -1,8 +1,9 @@
-import react, {useState, useEffect} from 'react';
+import {useState, useEffect} from 'react';
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
+import Axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -83,7 +84,6 @@ const useStyles = makeStyles((theme) => ({
 const Prices = () => {
     const [gold, setGold] = useState()
     const [silver, setSilver] = useState()
-    const [platinum, setPlatinum] = useState()
     const classes = useStyles();
 
     useEffect(() =>{
@@ -96,29 +96,12 @@ const Prices = () => {
         myHeaders.append("x-access-token", "goldapi-2zyhxd0ukp0mz0ip-io");
         myHeaders.append("Content-Type", "application/json");
 
-        var requestOptions = {
-            method: 'GET',
-            headers: myHeaders,
-            redirect: 'follow'
-        };
-
-        fetch("https://www.goldapi.io/api/XAU/USD", requestOptions)
-        .then(resp => resp.json())
-        .then(result => 
-            setGold(result.price))
-        .catch(error => console.log('error', error));
-
-        fetch('https://www.goldapi.io/api/XAG/USD', requestOptions)
-        .then(response => response.json())
-        .then(result => 
-            setSilver(result.price))
-        .catch(error => console.log('error', error));
-
-        fetch('https://www.goldapi.io/api/XPT/USD', requestOptions)
-        .then(response => response.json())
-        .then(result => 
-            setPlatinum(result.price))
-        .catch(error => console.log('error', error));
+        Axios.get('https://data-asg.goldprice.org/dbXRates/USD')
+        .then(resp => {
+            setGold(resp.data.items[0].xauPrice)
+            setSilver(resp.data.items[0].xagPrice)
+        })
+        .catch(error => console.log('error', error))
     }
 
     return (
@@ -126,24 +109,23 @@ const Prices = () => {
             <Grid item xs={4} md={4} lg={4}>
                 <Paper className={classes.customBorderRadius} elevation={7}>
                     <Typography variant="h6" className={classes.sub_title}>GOLD</Typography>
-                    <Typography variant="h6" className={classes.sub_title}>{parseFloat(0).toFixed(2)}</Typography>
+                    <Typography variant="h6" className={classes.sub_title}>{parseFloat(gold).toFixed(2)}</Typography>
                 </Paper>
             </Grid>
             <Grid item xs={4} md={4} lg={4}>
                 <Paper className={classes.customBorderRadius} elevation={7}>
                     <Typography variant="h6" className={classes.sub_title}>SILVER</Typography>
-                    <Typography variant="h6" className={classes.sub_title}>{parseFloat(0).toFixed(2)}</Typography>
+                    <Typography variant="h6" className={classes.sub_title}>{parseFloat(silver).toFixed(2)}</Typography>
                 </Paper>
             </Grid>
             <Grid item xs={4} md={4} lg={4}>
                 <Paper className={classes.customBorderRadius} elevation={7}>
                     <Typography variant="h6" className={classes.sub_title}>PLATINUM</Typography>
-                    <Typography variant="h6" className={classes.sub_title}>{parseFloat(0).toFixed(6)}</Typography>
+                    <Typography variant="h6" className={classes.sub_title}>1152.13</Typography>
                 </Paper>
             </Grid>
         </>
     )
-
 }
 
 export default Prices

@@ -4,11 +4,9 @@ import Typography from '@material-ui/core/Typography';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import LinearProgress from '@material-ui/core/LinearProgress'
-import { styled } from '@material-ui/core/styles';
 import { InfoContext } from './context/InfoContext'
 import Box from '@material-ui/core/Box';
 import Title from './Title'
-import Popover from '@material-ui/core/Popover';
 import { Button } from '@material-ui/core'
 import { yellow, grey, red, green } from "@material-ui/core/colors";
 import { withStyles, createStyles } from "@material-ui/core/styles";
@@ -18,6 +16,7 @@ import silverFront1ozBack from './images/silver_back_1oz.png'
 import silverFront1kg from './images/silver_front_1kg.png'
 import silverBack1kg from './images/silver_back_1kg.png'
 import Tooltip from '@material-ui/core/Tooltip';
+import {isMobile} from 'react-device-detect';
 
 const BorderLinearProgress = withStyles((theme) =>
     createStyles({
@@ -82,40 +81,66 @@ const useStyles = makeStyles((theme) => ({
         maxWidth: 120,
         height: 60
     },
+   
 })
 );
 
 const Silver = (props) => {
     const classes = useStyles();
-    const [info, setInfo] = useContext(InfoContext);
     const [silverPrice, setSilverPrice] = useState({
         oneOUNCE: 40.64,
         oneKILO: 1225.15
     })
 
-
     const HtmlTooltip = withStyles((theme) => ({
         tooltip: {
-          backgroundColor: yellow[50],
-          color: 'rgba(0, 0, 0, 0.87)',
-          maxWidth: 220,
-          fontSize: theme.typography.pxToRem(12),
-          border: '2px solid #111',
-          borderRadius: 10
+            backgroundColor: yellow[50],
+            color: 'rgba(0, 0, 0, 0.87)',
+            maxWidth: 220,
+            fontSize: theme.typography.pxToRem(12),
+            border: '2px solid #111',
+            borderRadius: 10
         },
     }))(Tooltip);
 
     const GreenTextTypography = withStyles({
         root: {
-          color: green[500]
+            color: green[500]
         }
     })(Typography);
 
     const RedTextTypography = withStyles({
         root: {
-          color: red[500]
+            color: red[500]
         }
     })(Typography);
+
+    const smallRoundButtons = withStyles({
+        button: {
+            borderRadius: 10,
+            width: 5
+        }
+    })(Button);
+
+    const changeToolTips = (val) => {
+
+        if(isMobile){
+            return (
+                <Typography variant="subtitle1" display="inline">
+                    {val}
+                </Typography>
+            )
+            
+        } else {
+            return (
+                <Typography variant="subtitle1" display="inline">
+                    {val}
+                </Typography>
+            )
+        }
+    }
+
+   
 
     return (
         <>
@@ -123,7 +148,7 @@ const Silver = (props) => {
                 <CardContent>
                     <Box border={0} display="flex" alignItems="center" justifyContent="space-between" >
                         <Box border={0}>
-                            <Title>SILVER</Title>
+                            <Title >SILVER</Title>
                         </Box>
                         <Box border={0}>
                             <img src={gold} alt="Anchor.Gold!" className={classes.logo} />
@@ -156,9 +181,10 @@ const Silver = (props) => {
                                     </>
                                 }
                             >
-                                <Typography variant="subtitle1" display="inline">
+                                {changeToolTips('1oz')}
+                                {/* <Typography variant="subtitle1" display="inline">
                                     1oz
-                                </Typography>
+                                </Typography> */}
                             </HtmlTooltip>
                         </Box>
                         <Box border={0} width="100%" >
@@ -177,9 +203,10 @@ const Silver = (props) => {
                                     </>
                                 }
                             >
-                                <Typography variant="subtitle1" display="inline">
-                                    1oz
-                                </Typography>
+                                {changeToolTips('1kg')}
+                                {/* <Typography variant="subtitle1" display="inline">
+                                    1kg
+                                </Typography> */}
                             </HtmlTooltip>
                         </Box>
 

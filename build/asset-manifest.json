@@ -1,24 +1,36 @@
 {
   "files": {
     "main.css": "/static/css/main.9d5b29c0.chunk.css",
-    "main.js": "/static/js/main.82d5e855.chunk.js",
-    "main.js.map": "/static/js/main.82d5e855.chunk.js.map",
+    "main.js": "/static/js/main.51c46fa5.chunk.js",
+    "main.js.map": "/static/js/main.51c46fa5.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.5998d591.js",
     "runtime-main.js.map": "/static/js/runtime-main.5998d591.js.map",
     "static/css/2.61b4cb56.chunk.css": "/static/css/2.61b4cb56.chunk.css",
-    "static/js/2.97a9b429.chunk.js": "/static/js/2.97a9b429.chunk.js",
-    "static/js/2.97a9b429.chunk.js.map": "/static/js/2.97a9b429.chunk.js.map",
+    "static/js/2.f3be7a94.chunk.js": "/static/js/2.f3be7a94.chunk.js",
+    "static/js/2.f3be7a94.chunk.js.map": "/static/js/2.f3be7a94.chunk.js.map",
     "index.html": "/index.html",
     "static/css/2.61b4cb56.chunk.css.map": "/static/css/2.61b4cb56.chunk.css.map",
     "static/css/main.9d5b29c0.chunk.css.map": "/static/css/main.9d5b29c0.chunk.css.map",
-    "static/js/2.97a9b429.chunk.js.LICENSE.txt": "/static/js/2.97a9b429.chunk.js.LICENSE.txt",
-    "static/media/gold.4ac2dcd4.png": "/static/media/gold.4ac2dcd4.png"
+    "static/js/2.f3be7a94.chunk.js.LICENSE.txt": "/static/js/2.f3be7a94.chunk.js.LICENSE.txt",
+    "static/media/gold.4ac2dcd4.png": "/static/media/gold.4ac2dcd4.png",
+    "static/media/gold_back_1gm.556273c8.png": "/static/media/gold_back_1gm.556273c8.png",
+    "static/media/gold_front_1gm.38f08360.png": "/static/media/gold_front_1gm.38f08360.png",
+    "static/media/gold_image.6929dda6.png": "/static/media/gold_image.6929dda6.png",
+    "static/media/platinum_1oz_2019.f8ced700.png": "/static/media/platinum_1oz_2019.f8ced700.png",
+    "static/media/platinum_1oz_2019_front.0d57c4fd.png": "/static/media/platinum_1oz_2019_front.0d57c4fd.png",
+    "static/media/platinum_1oz_2021.d3eeec37.png": "/static/media/platinum_1oz_2021.d3eeec37.png",
+    "static/media/platinum_1oz_2021_front.066cf64c.png": "/static/media/platinum_1oz_2021_front.066cf64c.png",
+    "static/media/silver_back_1kg.a20319d7.png": "/static/media/silver_back_1kg.a20319d7.png",
+    "static/media/silver_back_1oz.972d25a0.png": "/static/media/silver_back_1oz.972d25a0.png",
+    "static/media/silver_front_1kg.e562e455.png": "/static/media/silver_front_1kg.e562e455.png",
+    "static/media/silver_front_1oz.9cd9606f.png": "/static/media/silver_front_1oz.9cd9606f.png",
+    "static/media/silver_image.692664fc.png": "/static/media/silver_image.692664fc.png"
   },
   "entrypoints": [
     "static/js/runtime-main.5998d591.js",
     "static/css/2.61b4cb56.chunk.css",
-    "static/js/2.97a9b429.chunk.js",
+    "static/js/2.f3be7a94.chunk.js",
     "static/css/main.9d5b29c0.chunk.css",
-    "static/js/main.82d5e855.chunk.js"
+    "static/js/main.51c46fa5.chunk.js"
   ]
 }

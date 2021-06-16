@@ -3,7 +3,7 @@ import IconButton from '@material-ui/core/IconButton';
 import AccountBalanceWalletTwoToneIcon from '@material-ui/icons/AccountBalanceWalletTwoTone';
 import Box from '@material-ui/core/Box';
 import { Button } from '@material-ui/core'
-import { makeStyles, withStyles} from '@material-ui/core/styles';
+import { makeStyles} from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
@@ -12,11 +12,9 @@ import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import Typography from '@material-ui/core/Typography';
 import { InfoContext } from './context/InfoContext'
-import { RewardContext } from './context/RewardContext'
 import { AnchorEarn, CHAINS, NETWORKS, DENOMS } from '@anchor-protocol/anchor-earn';
 import Axios from 'axios'
 import { Extension } from '@terra-money/terra.js';
-import { green } from "@material-ui/core/colors";
 import {isMobile} from 'react-device-detect';
 
 
@@ -125,8 +123,6 @@ const  WalletMenuIcon = (props) => {
 
     useEffect(() => {
 
-        // setWallet({address: 'terra1kmm34gn0tryvx9wzwgxl7hd9fj5n8yt88g93jw'})
-
         if(wallet.address){
             const anchorEarn = new AnchorEarn({
                 name: "testnet",
@@ -206,18 +202,6 @@ const  WalletMenuIcon = (props) => {
     return [storedValue, setValue];
     }
 
-    const ColorButton = withStyles((theme) => ({
-        root: {
-            color: theme.palette.getContrastText(green[500]),
-            borderColor: green[500],
-            color: green[500],
-            '&:hover': {
-                backgroundColor: green[700],
-                color: '#fff'
-            },
-        },
-    }))(Button);
-
     return (
         <>
             <IconButton
@@ -229,15 +213,6 @@ const  WalletMenuIcon = (props) => {
             >
                 <AccountBalanceWalletTwoToneIcon />
             </IconButton>
-
-            {/* <ColorButton 
-                onClick={destroy}
-                size="small"
-                variant="outlined"
-                color="primary"
-                className={classes.button}
-                
-            >App</ColorButton> */}
 
             <Dialog
                 className={classes.dialog}
